@@ -1,5 +1,5 @@
-from datetime import date
-from pydantic import BaseModel, ConfigDict, Field, field_validator, PositiveInt
+from datetime import date, timedelta
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from src.database.models import MovieStatusEnum
 
@@ -70,12 +70,14 @@ class MovieCreateSchema(BaseModel):
     @classmethod
     def check_date(cls, value: date) -> date:
         today = date.today()
-        if value.year > today.year + 1:
+        one_year_from_now = today + timedelta(days=365)
+
+        if value > one_year_from_now:
             raise ValueError("The date must not be more than one year in the future")
         return value
 
 
-class MovieDetailResponseSchema(MovieResponseSchema):
+class MovieDetailSchema(MovieResponseSchema):
     status: MovieStatusEnum
     budget: float
     revenue: float
@@ -96,11 +98,13 @@ class MovieUpdateSchema(BaseModel):
 
     @field_validator("date")
     @classmethod
-    def check_date(cls, value: date | None):
+    def check_date(cls, value: date | None) -> date | None:
         if value is None:
             return None
 
         today = date.today()
-        if value.year > today.year + 1:
+        one_year_from_now = today + timedelta(days=365)
+
+        if value > one_year_from_now:
             raise ValueError("The date must not be more than one year in the future")
         return value

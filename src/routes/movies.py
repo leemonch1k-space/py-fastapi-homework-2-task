@@ -9,7 +9,7 @@ from sqlalchemy.orm import joinedload, selectinload
 
 from database import get_db, MovieModel
 from database.models import CountryModel, GenreModel, ActorModel, LanguageModel
-from src.schemas.movies import MovieListSchema, MovieDetailResponseSchema, MovieCreateSchema, MovieUpdateSchema
+from src.schemas.movies import MovieListSchema, MovieDetailSchema, MovieCreateSchema, MovieUpdateSchema
 
 router = APIRouter()
 
@@ -72,7 +72,7 @@ async def get_movies(
     }
 
 
-@router.post("/movies/", response_model=MovieDetailResponseSchema, status_code=201)
+@router.post("/movies/", response_model=MovieDetailSchema, status_code=201)
 async def create_movie(
         db: Annotated[AsyncSession, Depends(get_db)],
         movie_data: MovieCreateSchema
@@ -124,7 +124,7 @@ async def create_movie(
     return db_movie
 
 
-@router.get("/movies/{movie_id}/", response_model=MovieDetailResponseSchema)
+@router.get("/movies/{movie_id}/", response_model=MovieDetailSchema)
 async def get_movie(movie_id: int, db: Annotated[AsyncSession, Depends(get_db)]):
     query = (
         select(MovieModel)
