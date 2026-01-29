@@ -1,1 +1,106 @@
-# Write your code here
+from datetime import date
+from pydantic import BaseModel, ConfigDict, Field, field_validator, PositiveInt
+
+from src.database.models import MovieStatusEnum
+
+
+class CountrySchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    code: str
+    name: str | None
+
+
+class GenresSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+
+
+class ActorsSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+
+
+class LanguagesSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+
+
+class MovieResponseSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    date: date
+    score: float
+    overview: str
+
+
+class MovieListSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    movies: list[MovieResponseSchema]
+    prev_page: str | None = None
+    next_page: str | None = None
+    total_pages: int
+    total_items: int
+
+
+class MovieCreateSchema(BaseModel):
+    name: str = Field(max_length=255)
+    date: date
+    score: float = Field(ge=0, le=100)
+    overview: str
+    status: MovieStatusEnum
+    budget: float = Field(ge=0)
+    revenue: float = Field(ge=0)
+    country: str
+    genres: list[str]
+    actors: list[str]
+    languages: list[str]
+
+    @field_validator("date")
+    @classmethod
+    def check_date(cls, value: date) -> date:
+        today = date.today()
+        if value.year > today.year + 1:
+            raise ValueError("The date must not be more than one year in the future")
+        return value
+
+
+class MovieDetailResponseSchema(MovieResponseSchema):
+    status: MovieStatusEnum
+    budget: float
+    revenue: float
+    country: CountrySchema
+    genres: list[GenresSchema]
+    actors: list[ActorsSchema]
+    languages: list[LanguagesSchema]
+
+
+class MovieUpdateSchema(BaseModel):
+    name: str | None
+    date: date | None
+    score: float | None = Field(default=None, ge=0, le=100)
+    overview: str | None
+    status: MovieStatusEnum | None
+    budget: float | None = Field(default=None, ge=0)
+    revenue: float | None = Field(default=None, ge=0)
+
+    @field_validator("date")
+    @classmethod
+    def check_date(cls, value: date | None):
+        if value is None:
+            return None
+
+        today = date.today()
+        if value.year > today.year + 1:
+            raise ValueError("The date must not be more than one year in the future")
+        return value
