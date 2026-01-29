@@ -9,7 +9,7 @@ from sqlalchemy.orm import joinedload, selectinload
 
 from database import get_db, MovieModel
 from database.models import CountryModel, GenreModel, ActorModel, LanguageModel
-from src.schemas.movies import MovieListSchema, MovieDetailSchema, MovieCreateSchema, MovieUpdateSchema
+from src.schemas.movies import MovieListResponseSchema, MovieDetailSchema, MovieCreateSchema, MovieUpdateSchema
 
 router = APIRouter()
 
@@ -32,7 +32,7 @@ async def get_or_create_entities(db: AsyncSession, model, names: list[str]):
     return list(existing_entities) + new_entities
 
 
-@router.get("/movies/", response_model=MovieListSchema)
+@router.get("/movies/", response_model=MovieListResponseSchema)
 async def get_movies(
         db: Annotated[AsyncSession, Depends(get_db)],
         page: int = Query(default=1, ge=1),

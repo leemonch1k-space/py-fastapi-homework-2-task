@@ -33,7 +33,7 @@ class LanguagesSchema(BaseModel):
     name: str
 
 
-class MovieResponseSchema(BaseModel):
+class MovieListItemSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
@@ -43,10 +43,10 @@ class MovieResponseSchema(BaseModel):
     overview: str
 
 
-class MovieListSchema(BaseModel):
+class MovieListResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    movies: list[MovieResponseSchema]
+    movies: list[MovieListItemSchema]
     prev_page: str | None = None
     next_page: str | None = None
     total_pages: int
@@ -77,7 +77,7 @@ class MovieCreateSchema(BaseModel):
         return value
 
 
-class MovieDetailSchema(MovieResponseSchema):
+class MovieDetailSchema(MovieListItemSchema):
     status: MovieStatusEnum
     budget: float
     revenue: float
