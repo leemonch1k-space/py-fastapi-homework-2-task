@@ -88,11 +88,11 @@ class MovieDetailSchema(MovieListItemSchema):
 
 
 class MovieUpdateSchema(BaseModel):
-    name: str | None
-    date: date | None
+    name: str | None = None
+    date: date | None = None
     score: float | None = Field(default=None, ge=0, le=100)
-    overview: str | None
-    status: MovieStatusEnum | None
+    overview: str | None = None
+    status: MovieStatusEnum | None = None
     budget: float | None = Field(default=None, ge=0)
     revenue: float | None = Field(default=None, ge=0)
 

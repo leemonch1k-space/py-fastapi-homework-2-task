@@ -117,6 +117,7 @@ async def create_movie(
     try:
         await db.commit()
         await db.refresh(db_movie)
+        await db.refresh(db_movie, ["country", "genres", "actors", "languages"])
     except IntegrityError:
         await db.rollback()
         raise HTTPException(status_code=400, detail="Invalid input data.")
