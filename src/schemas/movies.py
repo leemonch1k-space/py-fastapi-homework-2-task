@@ -1,3 +1,4 @@
+from typing import Optional
 from datetime import date, timedelta
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -9,7 +10,7 @@ class CountrySchema(BaseModel):
 
     id: int
     code: str
-    name: str | None
+    name: Optional[str]
 
 
 class GenresSchema(BaseModel):
@@ -47,8 +48,8 @@ class MovieListResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     movies: list[MovieListItemSchema]
-    prev_page: str | None = None
-    next_page: str | None = None
+    prev_page: Optional[str]
+    next_page: Optional[str]
     total_pages: int
     total_items: int
 
@@ -88,17 +89,17 @@ class MovieDetailSchema(MovieListItemSchema):
 
 
 class MovieUpdateSchema(BaseModel):
-    name: str | None = None
-    date: date | None = None
-    score: float | None = Field(default=None, ge=0, le=100)
-    overview: str | None = None
-    status: MovieStatusEnum | None = None
-    budget: float | None = Field(default=None, ge=0)
-    revenue: float | None = Field(default=None, ge=0)
+    name: Optional[str] = None
+    date: Optional[date] = None
+    score: Optional[float] = Field(default=None, ge=0, le=100)
+    overview: Optional[str] = None
+    status: Optional[MovieStatusEnum] = None
+    budget: Optional[float] = Field(default=None, ge=0)
+    revenue: Optional[float] = Field(default=None, ge=0)
 
     @field_validator("date")
     @classmethod
-    def check_date(cls, value: date | None) -> date | None:
+    def check_date(cls, value: Optional[date]) -> Optional[date]:
         if value is None:
             return None
 
